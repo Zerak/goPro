@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"strconv"
 )
 
 func Handler(conn net.Conn, msgs chan string) {
@@ -42,32 +41,6 @@ func echoHandler(conns *map[string]net.Conn, msgs chan string) {
 	}
 }
 
-func StartClient(tcpaddr string) {
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", tcpaddr)
-	if err != nil {
-		fmt.Println("ResolveTCPAddr err")
-		return
-	}
-	conn, err := net.DialTCP("tcp", nil, tcpAddr)
-	if err != nil {
-		fmt.Println("DiaTCP err")
-		return
-	}
-	go chatSend(conn)
-
-	buf := make([]byte, 1024)
-	for {
-		length, err := conn.Read(buf)
-		if err != nil {
-			conn.Close()
-			fmt.Println("servive may down. exit")
-			os.Exit(0)
-		}
-
-		fmt.Println("recv from server[" + string(buf[0:length]) + "]")
-	}
-}
-
 func StartServer(port string) {
 	service := ":" + port
 	tcpAddr, err := net.ResolveTCPAddr("tcp", service)
@@ -102,40 +75,18 @@ func StartServer(port string) {
 }
 
 func main() {
-	if len(os.Args) != 3 {
-		fmt.Println("wrong args like this\nserver port] or [client addr:port]")
+	if len(os.Args) != 2 {
+		fmt.Println("wrong args like this\n [port]")
 		os.Exit(0)
 	}
 
-	if os.Args[1] == "server" && len(os.Args) == 3 {
-		StartServer(os.Args[2])
+	if len(os.Args) == 2 {
+		StartServer(os.Args[1])
+	}else{		
+		fmt.Println("wrong args like this\n [port]")
 	}
 
-	if os.Args[1] == "client" && len(os.Args) == 3 {
-		StartClient(os.Args[2])
-	}
-	fmt.Println("execute")
-}
-
-func chatSend(conn net.Conn) {
-	var input string
-	uname := conn.LocalAddr().String()
-	for {
-		fmt.Scanln(&input)
-		if input == "/quit" {
-			fmt.Println("bye...")
-			conn.Close()
-			os.Exit(0)
-		}
-
-		length, err := conn.Write([]byte(uname + " Say :::" + input))
-		fmt.Println("send len[" + strconv.Itoa(length) + "]")
-		if  err != nil {
-			fmt.Println("client write err info->" + err.Error())
-			conn.Close()
-			break
-		}
-	}
+	fmt.Println("exit")
 }
 
 
