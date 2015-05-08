@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"net"
 	"os"
+
+	"clientmgr"
 )
 
 func Handler(conn net.Conn, msgs chan string) {
-	fmt.Println("[server:Handler] connection from[", conn.RemoteAddr().String())
+	fmt.Println("[server:Handler] connection from[", conn.RemoteAddr().String() , "]")
 
 	buf := make([]byte, 1024)
 	for {
 		length, err := conn.Read(buf)
 		if err != nil {
+			fmt.Println("[server:Handler] the client[", conn.RemoteAddr().String() , "] Closed")
 			conn.Close()
 			break
 		}
@@ -28,7 +31,7 @@ func Handler(conn net.Conn, msgs chan string) {
 func echoHandler(conns *map[string]net.Conn, msgs chan string) {
 	for {
 		msg := <-msgs
-		fmt.Println("[server:echoHandler]recive msg [" + msg + "]")
+		fmt.Println("[server:echoHandler] msg [" + msg + "]")
 
 		for key, val := range *conns {
 			//fmt.Println("[server:echoHandler]connection from ->", key)
@@ -54,6 +57,7 @@ func StartServer(port string) {
 		fmt.Println("[server]ListenTCP err")
 		return
 	}
+	fmt.Println("[server]ListenTCP ok")
 
 	conns := make(map[string]net.Conn)
 	msgs := make(chan string, 100)
@@ -61,8 +65,6 @@ func StartServer(port string) {
 	go echoHandler(&conns, msgs)
 
 	for {
-		fmt.Println("[server]listening ...")
-
 		conn, err := listen.Accept()
 		if err != nil {
 			fmt.Println("[server]Accept err")
@@ -82,12 +84,9 @@ func main() {
 
 	if len(os.Args) == 2 {
 		StartServer(os.Args[1])
-	}else{		
+	} else {
 		fmt.Println("wrong args like this\n [port]")
 	}
 
 	fmt.Println("exit")
 }
-
-
-
