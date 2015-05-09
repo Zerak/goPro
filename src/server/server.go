@@ -72,7 +72,7 @@ func StartServer(port string) {
 		fmt.Println("[server]connect to redis Err.", err)
 		return
 	} else {
-		fmt.Println("[server]connect to redis OK2")
+		fmt.Println("[server]connect to redis OK")
 	}
 	defer client.Close()
 	//|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -83,6 +83,13 @@ func StartServer(port string) {
 		fmt.Println("[server] set name err")
 	} else {
 		fmt.Println("[server] set name ok")
+	}
+
+	username, err := redis.String(client.Do("get","username"))
+	if err != nil {
+		fmt.Println("[server] get name err")
+	}else{
+		fmt.Println("[server] get name ", username)
 	}
 	//|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 

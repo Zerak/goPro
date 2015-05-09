@@ -1,27 +1,3 @@
-// type Connection
-// func NewConnection(conn Socket, maxcount int, dh DataHandler, ih IdentityHandler, eh ErrorHandler) *Connection
-// func (p *Connection) Start()
-// func (p *Connection) Close()
-// func (p *Connection) Query(data []byte) (res []byte, err error)
-// func (p *Connection) Reply(query, answer []byte) error
-// func (p *Connection) Write(data []byte) error
-// type Socket interface {
-// Read() ([]byte, error)
-// Write([]byte) error
-// Close()
-// }
-// type DataHandler interface {
-// Process([]byte)
-// }
-// type ErrorHandler interface {
-// OnError(error)
-// }
-// type IdentityHandler interface {
-// GetIdentity([]byte) uint32
-// SetIdentity([]byte, uint32)
-// }
-
-// package multiplexer
 package server
 
 import (
@@ -59,8 +35,8 @@ type Connection struct {
 	chsend     chan []byte
 	chch       chan chan []byte
 	dh         DataHandler
-	ih         IdentityHandler
 	eh         ErrorHandler
+	ih         IdentityHandler
 	identity   uint32
 }
 

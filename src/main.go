@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("wrong args like this\n[server port2] or [client addr:port2] ok")
+		fmt.Println("wrong args like this\n[server port] or [client addr:port] ok")
 		os.Exit(0)
 	}
 	if os.Args[1] == "server" && len(os.Args) == 3 {
